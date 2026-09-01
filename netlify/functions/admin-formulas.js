@@ -44,6 +44,53 @@ exports.handler = async function (event) {
         return { statusCode: 401, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Unauthorized' }) }
       }
     }
+
+    // If Supabase env vars are set, use Supabase for persistence instead of JSON files
+    const SUPABASE_URL = process.env.SUPABASE_URL
+    const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const { createClient } = require('@supabase/supabase-js')
+        const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+        if (event.httpMethod === 'GET') {
+          const { data, error } = await sb.from('formulas').select('*')
+          if (error) throw error
+          return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }) }
+        }
+
+        if (event.httpMethod === 'POST') {
+          const body = JSON.parse(event.body || '{}')
+          const { data, error } = await sb.from('formulas').insert([body]).select().single()
+          if (error) throw error
+          return { statusCode: 201, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }) }
+        }
+
+        if (event.httpMethod === 'PUT') {
+          const body = JSON.parse(event.body || '{}')
+          if (!body.id) return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Missing id' }) }
+          const { data, error } = await sb.from('formulas').update(body).eq('id', body.id).select().single()
+          if (error) throw error
+          return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }) }
+        }
+
+        if (event.httpMethod === 'DELETE') {
+          const qs = (event.queryStringParameters && event.queryStringParameters.id) || null
+          let id = qs
+          if (!id) {
+            const b = JSON.parse(event.body || '{}')
+            id = b.id
+          }
+          if (!id) return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Missing id' }) }
+          const { data, error } = await sb.from('formulas').delete().eq('id', id).select().single()
+          if (error) throw error
+          return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }) }
+        }
+      } catch (err) {
+        console.error('Supabase error', err)
+        return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Supabase error' }) }
+      }
+    }
     if (event.httpMethod === 'GET') {
       const data = readFile()
       return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }) }
