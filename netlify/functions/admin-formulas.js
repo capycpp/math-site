@@ -50,6 +50,33 @@ exports.handler = async function (event) {
       return { statusCode: 201, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: item }) }
     }
 
+    if (event.httpMethod === 'PUT') {
+      const body = JSON.parse(event.body || '{}')
+      const data = readFile()
+      const idx = data.findIndex((d) => d.id === body.id)
+      if (idx === -1) return { statusCode: 404, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Not found' }) }
+      const updated = { ...data[idx], ...body }
+      data[idx] = updated
+      writeFile(data)
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: updated }) }
+    }
+
+    if (event.httpMethod === 'DELETE') {
+      const qs = (event.queryStringParameters && event.queryStringParameters.id) || null
+      let id = qs
+      if (!id) {
+        const b = JSON.parse(event.body || '{}')
+        id = b.id
+      }
+      if (!id) return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Missing id' }) }
+      const data = readFile()
+      const idx = data.findIndex((d) => d.id === id)
+      if (idx === -1) return { statusCode: 404, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Not found' }) }
+      const removed = data.splice(idx, 1)[0]
+      writeFile(data)
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: removed }) }
+    }
+
     return { statusCode: 405, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Method not allowed' }) }
   } catch (err) {
     console.error(err)
