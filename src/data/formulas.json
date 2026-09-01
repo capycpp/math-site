@@ -1,0 +1,16 @@
+[
+  {
+    "id": "pythagoras",
+    "title": "Pythagorean theorem",
+    "latex": "a^2 + b^2 = c^2",
+    "explanation": "Relates the sides of a right triangle.",
+    "category": "Geometry"
+  },
+  {
+    "id": "quadratic",
+    "title": "Quadratic formula",
+    "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+    "explanation": "Solutions to ax^2 + bx + c = 0",
+    "category": "Algebra"
+  }
+]

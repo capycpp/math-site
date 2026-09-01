@@ -1,0 +1,18 @@
+[
+  {
+    "id": "p1",
+    "title": "Pythagoras simple",
+    "question": "Find c if a=3 and b=4.",
+    "difficulty": "Easy",
+    "answer": "5",
+    "tags": ["geometry", "triangle"]
+  },
+  {
+    "id": "p2",
+    "title": "Solve quadratic",
+    "question": "Solve x^2 - 5x + 6 = 0",
+    "difficulty": "Medium",
+    "answer": "2,3",
+    "tags": ["algebra"]
+  }
+]

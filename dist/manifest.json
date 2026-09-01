@@ -1,0 +1,8 @@
+{
+  "name": "MathSite",
+  "short_name": "MathSite",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6c5ce7"
+}
