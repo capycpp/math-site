@@ -14,12 +14,15 @@ type AuthContextValue = {
   signup: () => void
   logout: () => void
   open: (view?: string) => void
+  initialized: boolean
 }
+
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<NetlifyUser | null>(null)
+  const [initialized, setInitialized] = useState(false)
 
   useEffect(() => {
     netlifyIdentity.init()
@@ -27,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let current = netlifyIdentity.currentUser()
     if (current) {
       setUser({ id: current.id as any, email: current.email as any, user_metadata: current.user_metadata, app_metadata: current.app_metadata })
+      setInitialized(true)
     } else {
       // Fallback: some setups persist session in localStorage under 'gotrue.user'
       try {
@@ -46,8 +50,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setTimeout(() => {
         current = netlifyIdentity.currentUser()
         if (current) setUser({ id: current.id as any, email: current.email as any, user_metadata: current.user_metadata, app_metadata: current.app_metadata })
+        setInitialized(true)
       }, 200)
     }
+    // ensure initialized eventually
+    setTimeout(() => setInitialized(true), 500)
 
     function handleLogin(u: any) {
       setUser({ id: u.id, email: u.email, user_metadata: u.user_metadata, app_metadata: u.app_metadata })
@@ -84,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, open }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, login, signup, logout, open, initialized }}>{children}</AuthContext.Provider>
   )
 }
 
