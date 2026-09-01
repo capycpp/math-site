@@ -23,9 +23,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     netlifyIdentity.init()
-    const current = netlifyIdentity.currentUser()
+    // Try to read current user from the widget
+    let current = netlifyIdentity.currentUser()
     if (current) {
       setUser({ id: current.id as any, email: current.email as any, user_metadata: current.user_metadata, app_metadata: current.app_metadata })
+    } else {
+      // Fallback: some setups persist session in localStorage under 'gotrue.user'
+      try {
+        const raw = localStorage.getItem('gotrue.user') || localStorage.getItem('nf_jwt') || localStorage.getItem('netlifyUser')
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          const u = parsed.user || parsed
+          if (u && (u.id || u.email)) {
+            setUser({ id: u.id as any, email: u.email as any, user_metadata: (u.user_metadata as any) || {}, app_metadata: (u.app_metadata as any) || {} })
+          }
+        }
+      } catch (e) {
+        // ignore parse errors
+      }
+
+      // retry once after a short delay — some identity widget setups initialize later
+      setTimeout(() => {
+        current = netlifyIdentity.currentUser()
+        if (current) setUser({ id: current.id as any, email: current.email as any, user_metadata: current.user_metadata, app_metadata: current.app_metadata })
+      }, 200)
     }
 
     function handleLogin(u: any) {
