@@ -12,6 +12,8 @@ import Admin from '../pages/Admin'
 import ProtectedRoute from '../components/ProtectedRoute'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
+import ResetPassword from '../pages/ResetPassword'
+import Profile from '../pages/Profile'
 import NotFound from '../pages/NotFound'
 import Exams from '../pages/Problems'
 
@@ -29,6 +31,8 @@ export default function Router() {
       <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/profile" element={<Profile />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   )

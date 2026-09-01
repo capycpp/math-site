@@ -1,20 +1,34 @@
 import React, { useEffect, useState } from 'react'
 
 export default function DarkModeToggle() {
-  const [mode, setMode] = useState<'light' | 'dark'>('light')
+  const [dark, setDark] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('theme')
+      if (saved) return saved === 'dark'
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    } catch (e) {
+      return false
+    }
+  })
 
   useEffect(() => {
-    const root = window.document.documentElement
-    if (mode === 'dark') root.classList.add('dark')
-    else root.classList.remove('dark')
-  }, [mode])
+    const root = document.documentElement
+    if (dark) {
+      root.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      root.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }, [dark])
 
   return (
     <button
-      onClick={() => setMode((m) => (m === 'light' ? 'dark' : 'light'))}
-      className="px-3 py-1 rounded bg-white/20"
+      onClick={() => setDark((d) => !d)}
+      className="px-3 py-1 rounded bg-white/10 dark:bg-slate-700"
+      aria-label="Toggle dark mode"
     >
-      {mode === 'light' ? '🌙' : '☀️'}
+      {dark ? '☀️' : '🌙'}
     </button>
   )
 }
