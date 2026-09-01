@@ -10,8 +10,8 @@ export default function Admin() {
       <h2 className="text-2xl font-semibold mb-4">Admin Dashboard</h2>
       <AuthDebug />
       <div className="flex gap-4 mb-6">
-        <Link to="formulas" className="px-3 py-1 border rounded">Formulas</Link>
-        <Link to="problems" className="px-3 py-1 border rounded">Problems</Link>
+        <Link to="/admin/formulas" className="px-3 py-1 border rounded">Formulas</Link>
+        <Link to="/admin/problems" className="px-3 py-1 border rounded">Problems</Link>
       </div>
 
       <Routes>
