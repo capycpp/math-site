@@ -9,6 +9,7 @@ import Problems from '../pages/Problems'
 import ProblemDetail from '../pages/ProblemDetail'
 import Dashboard from '../pages/Dashboard'
 import Admin from '../pages/Admin'
+import ProtectedRoute from '../components/ProtectedRoute'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import NotFound from '../pages/NotFound'
@@ -25,7 +26,7 @@ export default function Router() {
       <Route path="/problems" element={<Problems />} />
       <Route path="/problems/:id" element={<ProblemDetail />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/admin/*" element={<Admin />} />
+      <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="*" element={<NotFound />} />
