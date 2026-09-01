@@ -1,4 +1,5 @@
 # MathSite
+idk i did this with ai, i dont even know web development 
 
 This repository is a Vite + React + TypeScript scaffold for a mathematics learning
 platform designed for Netlify hosting with Netlify Identity.

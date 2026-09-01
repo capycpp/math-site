@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getFormulas } from '../../services/formulaService'
+import netlifyIdentity from 'netlify-identity-widget'
 
 type Form = { id?: string; title: string; latex: string; explanation: string; category: string }
 
@@ -26,9 +27,13 @@ export default function AdminFormulas() {
 
   async function create() {
     try {
+      const current = netlifyIdentity.currentUser()
+      const token = current ? await current.jwt() : null
+      const headers: any = { 'Content-Type': 'application/json' }
+      if (token) headers['Authorization'] = `Bearer ${token}`
       const res = await fetch('/.netlify/functions/admin-formulas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(form),
       })
       const j = await res.json()

@@ -12,5 +12,12 @@
     "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
     "explanation": "Solutions to ax^2 + bx + c = 0",
     "category": "Algebra"
+  },
+  {
+    "id": "TestID",
+    "title": "Test Title",
+    "latex": "Test Formula",
+    "explanation": "Test Explanation",
+    "category": "Test Category"
   }
 ]
